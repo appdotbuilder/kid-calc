@@ -1,11 +1,20 @@
+import { db } from '../db';
+import { calculationsTable } from '../db/schema';
 import { type Calculation } from '../schema';
+import { desc } from 'drizzle-orm';
 
-export async function getCalculationHistory(): Promise<Calculation[]> {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is to fetch the calculation history from the database
-    // so kids can see their recent calculations and learn from their work.
-    
-    // Return empty array as placeholder - real implementation should query the database
-    // and return calculations ordered by most recent first
-    return [];
-}
+export const getCalculationHistory = async (): Promise<Calculation[]> => {
+  try {
+    // Query all calculations ordered by most recent first
+    const results = await db.select()
+      .from(calculationsTable)
+      .orderBy(desc(calculationsTable.created_at))
+      .execute();
+
+    // Real columns are already numbers, no conversion needed
+    return results;
+  } catch (error) {
+    console.error('Failed to fetch calculation history:', error);
+    throw error;
+  }
+};
